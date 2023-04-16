@@ -1,0 +1,23 @@
+{
+  "name": "hasanmertermis/milvus-php-client",
+  "description": "Milvus 2 Grpc Php Client",
+  "authors": [
+    {
+      "name": "Hasan Mert ERMİŞ",
+      "email": "hasanmertermis@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.4",
+    "grpc/grpc": "^v1.3.0",
+    "google/protobuf": "^v3.3.0",
+    "ext-grpc": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Milvus\\": "src/php/"
+    }
+  },
+  "license": "MIT"
+}

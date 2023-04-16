@@ -1,0 +1,15 @@
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin ./protos/common.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin protos/data_coord.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin etcd_meta.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin protos/feder.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin index_cgo_msg.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin index_coord.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin internal.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin protos/milvus.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin protos/msg.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin plan.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin proxy.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin query_coord.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin root_coord.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin protos/schema.proto;
+protoc --proto_path=protos --php_out=php --grpc_out=php --plugin=protoc-gen-grpc=lib/grpc_php_plugin segcore.proto;
