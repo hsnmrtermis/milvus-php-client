@@ -19,5 +19,5 @@ $data = [
     ->setFieldType(DataType::VarChar)
 ];
 
-$ids = $client->insert($data, 'deneme');
+$ids = $client->insert($data, 'example_collection');
 print_r($ids);

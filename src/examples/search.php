@@ -10,7 +10,7 @@ $client = new Milvus();
 $data = (new Field())
     ->setFieldData([0.11240274459123611,0.7787224650382996,0.80665522813792])
     ->setMetricType('L2')
-    ->setFieldName('encoding');
+    ->setFieldName('field_name');
 
-$response = $client->search($data, 'encodings', 10, 1000);
+$response = $client->search($data, 'example_collection', 10, 1000);
 print_r($response);

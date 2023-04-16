@@ -11,7 +11,7 @@ $client = new Milvus();
 
 $id = '41822b49-2272-46cd-8d49-a959faf819d8';
 
-$client->delete('deneme', $id, 'id');
+$client->delete('example_collection', $id, 'id');
 
 $newData = [
     (new Field())->setFieldName('col')
@@ -23,4 +23,4 @@ $newData = [
         ->setFieldType(DataType::VarChar)
 ];
 
-$client->insert($newData, 'deneme');
+$client->insert($newData, 'example_collection');

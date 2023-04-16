@@ -46,6 +46,13 @@ class Milvus
     {
             $this->connection($host, $port);
     }
+    public function getConnectionInfo(){
+        return [
+            'host' => $this->host,
+            'port' => $this->port,
+            'isConnected' => $this->isConnected
+        ];
+    }
 
     /**
      * @return void
