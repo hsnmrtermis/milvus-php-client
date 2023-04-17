@@ -16,7 +16,7 @@
   },
   "autoload": {
     "psr-4": {
-      "hasanmertermis\\MilvusPhpClient": "src/php/"
+      "Hasanmertermis\\MilvusPhpClient": "src/php/"
     }
   },
   "license": "MIT"
