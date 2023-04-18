@@ -32,20 +32,17 @@ class Milvus
     /**
      * @var string
      */
-    private $host = "localhost";
+    private $host;
     /**
      * @var string
      */
-    private $port = "19530";
+    private $port;
     /**
      * @var bool
      */
     private bool $isConnected = false;
 
-    public function __construct($host=null, $port=null)
-    {
-            $this->connection($host, $port);
-    }
+    public function __construct(){}
     public function getConnectionInfo(){
         return [
             'host' => $this->host,
@@ -60,8 +57,8 @@ class Milvus
     public function connection($host=null, $port=null)
     {
         try {
-            $host = $host ? $host : $this->host;
-            $port = $port ? $port : $this->port;
+            $this->host = $host;
+            $this->port = $port;
             $this->Client = new MilvusServiceClient($host . ":" . $port, [
                 'credentials' => \Grpc\ChannelCredentials::createInsecure(),
             ]);
@@ -75,9 +72,11 @@ class Milvus
 
     /**
      * @return array
+     * @throws \Exception
      */
     public function getCollections(): array
     {
+        $this->connectionControl();
         list($response, $status) = $this->Client
             ->ShowCollections((new ShowCollectionsRequest()))
             ->wait();
@@ -93,9 +92,11 @@ class Milvus
      * @param string|int $id (required)
      * @param string $primaryKey (optional) (default=id)
      * @return array (deleted ids)
+     * @throws \Exception
      */
     public function delete(string $collectionName,$id =null, string $primaryKey = "id"): array
     {
+        $this->connectionControl();
         if ($id && $collectionName) {
             if (is_string($id)){
                 $expr = $primaryKey . " in  ['". $id . "']";
@@ -122,9 +123,11 @@ class Milvus
      * }
      * @param string $collectionName (required)
      * @return array ( inserted ids)
+     * @throws \Exception
      */
     public function insert(array $data, string $collectionName): array
     {
+        $this->connectionControl();
         $fields = [];
         foreach ($data as $field) {
             $fieldData = (new FieldData())
@@ -174,9 +177,11 @@ class Milvus
      * @param Field $data (required)
      * @param string $collectionName (required)
      * @return array
+     * @throws \Exception
      */
     public function search(Field $data, string $collectionName, string $limit, int $nprobe): array
     {
+        $this->connectionControl();
         $ids = [];
         $scores = [];
         $results = [];
@@ -233,5 +238,10 @@ class Milvus
             ];
         }
         return $results;
+    }
+    private function connectionControl(){
+        if (!$this->isConnected){
+            throw new \Exception('Please connect to milvus with the connection method.');
+        }
     }
 }
