@@ -1,6 +1,6 @@
 # Milvus Php Client
 
-Milvus 2.2 grpc Php Client.
+Milvus 2.2 gRPC Php Client.
 
 ## Compatibility
 
