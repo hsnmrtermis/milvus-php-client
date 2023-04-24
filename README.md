@@ -154,6 +154,7 @@ $newData = [
         ->setFieldType(DataType::FloatVector),
 
     (new Field())->setFieldName('id')
+        ->setIsPrimaryField(true)
         ->setFieldData($id)
         ->setFieldType(DataType::VarChar)
 ];
