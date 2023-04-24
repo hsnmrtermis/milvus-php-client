@@ -17,7 +17,9 @@ use Milvus\Proto\Milvus\ShowCollectionsRequest;
 use Milvus\Proto\Schema\DataType;
 use Milvus\Proto\Schema\FieldData;
 use Milvus\Proto\Schema\FloatArray;
+use Milvus\Proto\Schema\LongArray;
 use Milvus\Proto\Schema\ScalarField;
+use Milvus\Proto\Schema\StringArray;
 use Milvus\Proto\Schema\VectorField;
 
 /**
@@ -143,19 +145,18 @@ class Milvus
                     $fields[] = $fieldData;
                 }
             } else {
-                $class = Helpers::getFieldDataClass($field->getFieldType());
-                if ($class) {
-                    $method = $class['method'];
-                    $genericObj = new $class['class'];
+                    $class = Helpers::getFieldDataClass($field->getFieldType());
+                    if ($class) {
+                        $method = $class['method'];
+                        $genericObj = new $class['class'];
 
-                    $fieldData->setScalars(
-                        (new ScalarField())->{$method}(
-                            (new $class['class'])->setData([$field->getFieldData()])
-                        )
-                    );
-                    $fields[] = $fieldData;
-                }
-
+                        $fieldData->setScalars(
+                            (new ScalarField())->{$method}(
+                                (new $class['class'])->setData([$field->getFieldData()])
+                            )
+                        );
+                        $fields[] = $fieldData;
+                    }
             }
         }
         $request = (new InsertRequest())->setCollectionName($collectionName)

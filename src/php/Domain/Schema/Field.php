@@ -27,6 +27,12 @@ class Field
      */
     private string $metricType;
 
+
+    /**
+     * @var bool
+     */
+    private bool $isPrimaryField = false;
+
     /**
      * @param array $data
      */
@@ -115,6 +121,23 @@ class Field
     public function setFieldType($fieldType): Field
     {
         $this->fieldType = $fieldType;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrimaryField(): bool
+    {
+        return $this->isPrimaryField;
+    }
+
+    /**
+     * @param bool $isPrimaryField
+     */
+    public function setIsPrimaryField(bool $isPrimaryField): Field
+    {
+        $this->isPrimaryField = $isPrimaryField;
         return $this;
     }
 

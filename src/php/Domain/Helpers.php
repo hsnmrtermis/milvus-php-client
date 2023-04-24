@@ -8,6 +8,7 @@ use Milvus\Proto\Schema\DoubleArray;
 use Milvus\Proto\Schema\FloatArray;
 use Milvus\Proto\Schema\IDs;
 use Milvus\Proto\Schema\IntArray;
+use Milvus\Proto\Schema\LongArray;
 use Milvus\Proto\Schema\StringArray;
 
 class Helpers
@@ -32,13 +33,13 @@ class Helpers
     {
         $fields = [
             DataType::VarChar => ['class' =>StringArray::class, 'method' => 'setStringData'],
-            DataType::Int64 => ['class' => IntArray::class, 'method' => 'setIntData' ],
+            DataType::Int64 => ['class' => LongArray::class, 'method' => 'setLongData' ],
             DataType::Float => ['class' => FloatArray::class, 'method' => 'setFloatData'],
             DataType::Bool => ['class' => BoolArray::class, 'method' => 'setBoolData'],
             DataType::Double => ['class' => DoubleArray::class, 'method' => 'setDoubleData'],
-            DataType::Int8 => ['class' => IntArray::class, 'method' => 'setIntData'],
-            DataType::Int16 => ['class' => IntArray::class, 'method' => 'setIntData'],
-            DataType::Int32 => ['class' => IntArray::class, 'method' => 'setIntData'],
+            DataType::Int8 => ['class' => LongArray::class, 'method' => 'setLongData'],
+            DataType::Int16 => ['class' => LongArray::class, 'method' => 'setLongData'],
+            DataType::Int32 => ['class' => LongArray::class, 'method' => 'setLongData'],
             DataType::String => ['class' =>StringArray::class, 'method' => 'setStringData'],
             DataType::None => null
         ];
