@@ -1,11 +1,9 @@
 <?php
 
-namespace Domain\Schema;
+namespace Hasanmertermis\MilvusPhpClient\Domain\Schema;
 
 
-/**
- *
- */
+
 class Field
 {
     /**

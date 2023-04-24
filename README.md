@@ -27,7 +27,8 @@ Run composer on the terminal `composer require hasanmertermis/milvus-php-client`
 
 -----------------------
 ```php
-$client = new \Domain\Milvus();
+use Hasanmertermis\MilvusPhpClient\Domain\Milvus;
+$client = new Milvus();
 ```
 
 
@@ -40,8 +41,10 @@ $client = new \Domain\Milvus();
 But if the parameters are set, the host name and port are set as you entered.
 
 ```php
+use Hasanmertermis\MilvusPhpClient\Domain\Milvus;
+
 //Default use
-$client = new \Domain\Milvus();
+$client = new Milvus();
 $client->connection("example.com", 19530);
 ```
 
@@ -70,9 +73,9 @@ $client->connection("example.com", 19530);
 ```php
 <?php
 
-use Domain\Helpers;
-use Domain\Milvus;
-use Domain\Schema\Field;
+use Hasanmertermis\MilvusPhpClient\Domain\Helpers;
+use Hasanmertermis\MilvusPhpClient\Domain\Milvus;
+use Hasanmertermis\MilvusPhpClient\Domain\Schema\Field;
 use Milvus\Proto\Schema\DataType;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -106,8 +109,7 @@ print_r($ids);
 
 ```php
 <?php
-
-use Domain\Milvus;
+use Hasanmertermis\MilvusPhpClient\Domain\Milvus;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -131,9 +133,9 @@ print_r($deletedIDs);
 ```php
 <?php
 
-use Domain\Helpers;
-use Domain\Milvus;
-use Domain\Schema\Field;
+use Hasanmertermis\MilvusPhpClient\Domain\Helpers;
+use Hasanmertermis\MilvusPhpClient\Domain\Milvus;
+use Hasanmertermis\MilvusPhpClient\Domain\Schema\Field;
 use Milvus\Proto\Schema\DataType;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -166,8 +168,8 @@ $client->insert($newData, 'example_collection');
 ```php
 <?php
 
-use Domain\Milvus;
-use Domain\Schema\Field;
+use Hasanmertermis\MilvusPhpClient\Domain\Milvus;
+use Hasanmertermis\MilvusPhpClient\Domain\Schema\Field;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 

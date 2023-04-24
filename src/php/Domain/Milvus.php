@@ -1,8 +1,8 @@
 <?php
 
-namespace Domain;
+namespace Hasanmertermis\MilvusPhpClient\Domain;
 
-use Domain\Schema\Field;
+use Hasanmertermis\MilvusPhpClient\Domain\Schema\Field;
 use Milvus\Proto\Common\DslType;
 use Milvus\Proto\Common\KeyValuePair;
 use Milvus\Proto\Common\PlaceholderGroup;
@@ -238,7 +238,7 @@ class Milvus
         foreach ($scores as $index => $score){
             $results[] = [
               'id' =>  $ids[$index],
-               'score' => $scores[$index]
+              'distance' => $scores[$index]
             ];
         }
         return $results;

@@ -16,8 +16,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Hasanmertermis\\MilvusPhpClient\\": "src/php/",
-      "Domain\\": "src/php/Domain",
+      "Hasanmertermis\\MilvusPhpClient\\Domain\\": "src/php/Domain",
       "Milvus\\Proto\\Milvus\\": "src/php/Milvus/Proto/Milvus",
       "GPBMetadata\\": "src/php/GPBMetadata",
       "Milvus\\Proto\\Common\\": "src/php/Milvus/Proto/Common",

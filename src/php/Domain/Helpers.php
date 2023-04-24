@@ -1,13 +1,12 @@
 <?php
 
-namespace Domain;
+namespace Hasanmertermis\MilvusPhpClient\Domain;
 
 use Milvus\Proto\Schema\BoolArray;
 use Milvus\Proto\Schema\DataType;
 use Milvus\Proto\Schema\DoubleArray;
 use Milvus\Proto\Schema\FloatArray;
 use Milvus\Proto\Schema\IDs;
-use Milvus\Proto\Schema\IntArray;
 use Milvus\Proto\Schema\LongArray;
 use Milvus\Proto\Schema\StringArray;
 
