@@ -17,10 +17,9 @@ use Milvus\Proto\Milvus\ShowCollectionsRequest;
 use Milvus\Proto\Schema\DataType;
 use Milvus\Proto\Schema\FieldData;
 use Milvus\Proto\Schema\FloatArray;
-use Milvus\Proto\Schema\LongArray;
 use Milvus\Proto\Schema\ScalarField;
-use Milvus\Proto\Schema\StringArray;
 use Milvus\Proto\Schema\VectorField;
+use const Grpc\STATUS_OK;
 
 /**
  *
@@ -82,6 +81,7 @@ class Milvus
         list($response, $status) = $this->Client
             ->ShowCollections((new ShowCollectionsRequest()))
             ->wait();
+        $this->controlResults($response, $status, 'getCollectionNames');
         $collectionNames = [];
         foreach ($response->getCollectionNames() as $collectionName) {
             $collectionNames[] = $collectionName;
@@ -110,6 +110,7 @@ class Milvus
                 ->setCollectionName($collectionName)
                 ->setExpr($expr);
             list($response, $status) = $this->Client->Delete($request)->wait();
+            $this->controlResults($response, $status, 'getIDs');
             return Helpers::GetIds($response->getIDs());
         }
         return [];
@@ -164,6 +165,7 @@ class Milvus
             ->setNumRows(1);
 
         list($response, $status) = $this->Client->Insert($request)->wait();
+        $this->controlResults($response, $status, 'getIDs');
         $this->FlushAll();
         return Helpers::GetIds($response->getIDs());
     }
@@ -213,6 +215,7 @@ class Milvus
             ]);
 
         list($response, $status) = $this->Client->Search($request)->wait();
+        $this->controlResults($response, $status, 'getResults');
         $res = $response->getResults();
         if ($res->hasIds()){
             $idsObj = $res->getIds();
@@ -243,6 +246,22 @@ class Milvus
     private function connectionControl(){
         if (!$this->isConnected){
             throw new \Exception('Please connect to milvus with the connection method.');
+        }
+    }
+    private function controlResults($response, $status, $method){
+        try {
+            if ($status->code !== STATUS_OK) {
+                throw new \Exception('Milvus Connection (Status) Error: Code: ' . $status->code . ' Details: ' . $status->details . PHP_EOL);
+            }
+            if (is_null($response)) {
+                throw new \Exception('Milvus Parameters (Response) Error: Could not resolve error, please read contents of UnaryCall.php => wait() => $event->message.');
+            }
+            if(is_null($response->$method())){
+                throw new \Exception('Milvus Parameters (Result) Error: Could not resolve error, please read contents of UnaryCall.php => wait() => $event->message.');
+            }
+        }catch (\Exception $exception){
+            echo $exception->getMessage() . PHP_EOL;
+            exit(1);
         }
     }
 }

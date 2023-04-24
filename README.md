@@ -26,8 +26,8 @@ Run composer on the terminal `composer require hasanmertermis/milvus-php-client`
 ### Client
 
 -----------------------
-```
-$client = new Milvus();
+```php
+$client = new \Domain\Milvus();
 ```
 
 
@@ -39,13 +39,9 @@ $client = new Milvus();
 **connection** methods sets the connection parameters.İf parameters are not set host=localhost, port=19530 sets.
 But if the parameters are set, the host name and port are set as you entered.
 
-```
+```php
 //Default use
-$client = new Milvus();
-$client->connection(); // host=localhost, port=19530
-
-//Custom use
-$client = new Milvus();
+$client = new \Domain\Milvus();
 $client->connection("example.com", 19530);
 ```
 
@@ -53,7 +49,7 @@ $client->connection("example.com", 19530);
 
 **Response**
 
-```
+``` json
 [
 'host' => "localhost",
 'port' => 19530,
@@ -71,7 +67,7 @@ $client->connection("example.com", 19530);
 
 -------------
 
-```
+```php
 <?php
 
 use Domain\Helpers;
@@ -108,7 +104,7 @@ print_r($ids);
 
 ----------------
 
-```
+```php
 <?php
 
 use Domain\Milvus;
@@ -132,7 +128,7 @@ print_r($deletedIDs);
 
 -------------------------------------
 
-```
+```php
 <?php
 
 use Domain\Helpers;
@@ -167,7 +163,7 @@ $client->insert($newData, 'example_collection');
 
 ----------------------
 
-```
+```php
 <?php
 
 use Domain\Milvus;
