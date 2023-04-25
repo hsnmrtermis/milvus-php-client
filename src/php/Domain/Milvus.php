@@ -238,7 +238,7 @@ class Milvus
         foreach ($scores as $index => $score){
             $results[] = [
               'id' =>  $ids[$index],
-              'distance' => $scores[$index]
+              'distance' => number_format($scores[$index], 6)
             ];
         }
         return $results;
