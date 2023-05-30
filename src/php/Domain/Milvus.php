@@ -185,8 +185,6 @@ class Milvus
     public function search(Field $data, string $collectionName, string $limit, int $nprobe): array
     {
         $this->connectionControl();
-        $ids = [];
-        $scores = [];
         $results = [];
         $convertedByte = pack("f*", ...$data->getFieldData());
 
@@ -219,27 +217,23 @@ class Milvus
         $res = $response->getResults();
         if ($res->hasIds()){
             $idsObj = $res->getIds();
+            $scoreList = $res->getScores();
             if($idsObj->hasIntId()){
-                foreach ($idsObj->getIntId()->getData() as $a){
-                    $ids[] = $a;
+                foreach ($idsObj->getIntId()->getData() as $index =>  $id){
+                    $results[] = [
+                        'id' => $id,
+                        'distance' => number_format($scoreList[$index], 6)
+                    ];
                 }
             }
             if($idsObj->hasStrId()){
-                foreach ($idsObj->getStrId()->getData() as $a){
-                    $ids[] = $a;
+                foreach ($idsObj->getStrId()->getData() as $index => $id){
+                    $results[] = [
+                        'id' => $id,
+                        'distance' => number_format($scoreList[$index],6)
+                    ];
                 }
             }
-        }
-        $scoreList = $res->getScores();
-        foreach ($scoreList as $score){
-            $scores[] = $score;
-        }
-
-        foreach ($scores as $index => $score){
-            $results[] = [
-              'id' =>  $ids[$index],
-              'distance' => number_format($scores[$index], 6)
-            ];
         }
         return $results;
     }
