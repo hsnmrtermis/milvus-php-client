@@ -195,7 +195,7 @@ class Milvus
             ->setPartitionNames([])
             ->setDsl("")
             ->setDslType(DslType::BoolExprV1)
-            ->setGuaranteeTimestamp(0)
+            ->setGuaranteeTimestamp(1)
             ->setTravelTimestamp(0)
             ->setNq(1)
             ->setPlaceholderGroup(
