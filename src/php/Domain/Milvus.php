@@ -8,14 +8,17 @@ use Milvus\Proto\Common\KeyValuePair;
 use Milvus\Proto\Common\PlaceholderGroup;
 use Milvus\Proto\Common\PlaceholderType;
 use Milvus\Proto\Common\PlaceholderValue;
+use Milvus\Proto\Milvus\CreateCollectionRequest;
 use Milvus\Proto\Milvus\DeleteRequest;
 use Milvus\Proto\Milvus\FlushAllRequest;
 use Milvus\Proto\Milvus\InsertRequest;
 use Milvus\Proto\Milvus\MilvusServiceClient;
 use Milvus\Proto\Milvus\SearchRequest;
 use Milvus\Proto\Milvus\ShowCollectionsRequest;
+use Milvus\Proto\Schema\CollectionSchema;
 use Milvus\Proto\Schema\DataType;
 use Milvus\Proto\Schema\FieldData;
+use Milvus\Proto\Schema\FieldSchema;
 use Milvus\Proto\Schema\FloatArray;
 use Milvus\Proto\Schema\ScalarField;
 use Milvus\Proto\Schema\VectorField;
@@ -43,8 +46,12 @@ class Milvus
      */
     private bool $isConnected = false;
 
-    public function __construct(){}
-    public function getConnectionInfo(){
+    public function __construct()
+    {
+    }
+
+    public function getConnectionInfo()
+    {
         return [
             'host' => $this->host,
             'port' => $this->port,
@@ -55,20 +62,71 @@ class Milvus
     /**
      * @return void
      */
-    public function connection($host=null, $port=null)
+    public function connection($host = null, $port = null)
     {
-        try {
-            $this->host = $host;
-            $this->port = $port;
-            $this->Client = new MilvusServiceClient($host . ":" . $port, [
-                'credentials' => \Grpc\ChannelCredentials::createInsecure(),
-            ]);
-            $this->isConnected = true;
-        } catch (\Exception $e) {
-            echo "Bağlantı sırasında hata meydana geldi.HATA: " . $e->getMessage();
-            $this->isConnected = false;
-            exit(1);
+        $this->host = $host;
+        $this->port = $port;
+        $this->Client = new MilvusServiceClient($host . ":" . $port, [
+            'credentials' => \Grpc\ChannelCredentials::createInsecure(),
+        ]);
+        $this->isConnected = true;
+    }
+
+    /**
+     * @param string $name
+     * @param string $description
+     * @param array|Field[] $fields
+     * @param int $shardsNum
+     * @param int $consistencyLevel
+     * @return void
+     * @throws \Exception
+     */
+    public function createCollection(string $name, string $description, array $fields, int $shardsNum = 0, int $consistencyLevel = 0)
+    {
+        $this->connectionControl();
+
+        $fieldSchemas = [];
+        foreach ($fields as $field) {
+            /** @var Field $field */
+            $fieldSchema = (new FieldSchema())
+                ->setName($field->getFieldName())
+                ->setIsPrimaryKey($field->isPrimaryField())
+                ->setDataType($field->getFieldType());
+
+            $typeParams = [];
+
+            if (!is_null($field->getDim())) {
+                $typeParams[] = (new KeyValuePair())
+                    ->setKey('dim')
+                    ->setValue(strval($field->getDim()));
+            }
+
+            if (!is_null($field->getMaxLength())) {
+                $typeParams[] = (new KeyValuePair())
+                    ->setKey('max_length')
+                    ->setValue(strval($field->getMaxLength()));
+            }
+
+            if (!empty($typeParams)) {
+                $fieldSchema->setTypeParams($typeParams);
+            }
+
+            $fieldSchemas[] = $fieldSchema;
         }
+
+        $collectionSchema = (new CollectionSchema())
+            ->setName($name)
+            ->setDescription($description)
+            ->setFields($fieldSchemas);
+
+        $request = (new CreateCollectionRequest())
+            ->setCollectionName($name)
+            ->setSchema($collectionSchema->serializeToString())
+            ->setShardsNum($shardsNum)
+            ->setConsistencyLevel($consistencyLevel);
+
+        list($response, $status) = $this->Client->CreateCollection($request)->wait();
+        $this->controlResults($response, $status);
     }
 
     /**
@@ -96,15 +154,15 @@ class Milvus
      * @return array (deleted ids)
      * @throws \Exception
      */
-    public function delete(string $collectionName,$id =null, string $primaryKey = "id"): array
+    public function delete(string $collectionName, $id = null, string $primaryKey = "id"): array
     {
         $this->connectionControl();
         if ($id && $collectionName) {
-            if (is_string($id)){
-                $expr = $primaryKey . " in  ['". $id . "']";
+            if (is_string($id)) {
+                $expr = $primaryKey . " in  ['" . $id . "']";
             }
-            if (is_numeric($id)){
-                $expr = $primaryKey . " in  [". $id . "]";
+            if (is_numeric($id)) {
+                $expr = $primaryKey . " in  [" . $id . "]";
             }
             $request = (new DeleteRequest())
                 ->setCollectionName($collectionName)
@@ -146,18 +204,18 @@ class Milvus
                     $fields[] = $fieldData;
                 }
             } else {
-                    $class = Helpers::getFieldDataClass($field->getFieldType());
-                    if ($class) {
-                        $method = $class['method'];
-                        $genericObj = new $class['class'];
+                $class = Helpers::getFieldDataClass($field->getFieldType());
+                if ($class) {
+                    $method = $class['method'];
+                    $genericObj = new $class['class'];
 
-                        $fieldData->setScalars(
-                            (new ScalarField())->{$method}(
-                                (new $class['class'])->setData([$field->getFieldData()])
-                            )
-                        );
-                        $fields[] = $fieldData;
-                    }
+                    $fieldData->setScalars(
+                        (new ScalarField())->{$method}(
+                            (new $class['class'])->setData([$field->getFieldData()])
+                        )
+                    );
+                    $fields[] = $fieldData;
+                }
             }
         }
         $request = (new InsertRequest())->setCollectionName($collectionName)
@@ -215,47 +273,46 @@ class Milvus
         list($response, $status) = $this->Client->Search($request)->wait();
         $this->controlResults($response, $status, 'getResults');
         $res = $response->getResults();
-        if ($res->hasIds()){
+        if ($res->hasIds()) {
             $idsObj = $res->getIds();
             $scoreList = $res->getScores();
-            if($idsObj->hasIntId()){
-                foreach ($idsObj->getIntId()->getData() as $index =>  $id){
+            if ($idsObj->hasIntId()) {
+                foreach ($idsObj->getIntId()->getData() as $index => $id) {
                     $results[] = [
                         'id' => $id,
                         'distance' => number_format($scoreList[$index], 6)
                     ];
                 }
             }
-            if($idsObj->hasStrId()){
-                foreach ($idsObj->getStrId()->getData() as $index => $id){
+            if ($idsObj->hasStrId()) {
+                foreach ($idsObj->getStrId()->getData() as $index => $id) {
                     $results[] = [
                         'id' => $id,
-                        'distance' => number_format($scoreList[$index],6)
+                        'distance' => number_format($scoreList[$index], 6)
                     ];
                 }
             }
         }
         return $results;
     }
-    private function connectionControl(){
-        if (!$this->isConnected){
+
+    private function connectionControl()
+    {
+        if (!$this->isConnected) {
             throw new \Exception('Please connect to milvus with the connection method.');
         }
     }
-    private function controlResults($response, $status, $method){
-        try {
-            if ($status->code !== STATUS_OK) {
-                throw new \Exception('Milvus Connection (Status) Error: Code: ' . $status->code . ' Details: ' . $status->details . PHP_EOL);
-            }
-            if (is_null($response)) {
-                throw new \Exception('Milvus Parameters (Response) Error: Could not resolve error, please read contents of UnaryCall.php => wait() => $event->message.');
-            }
-            if(is_null($response->$method())){
-                throw new \Exception('Milvus Parameters (Result) Error: Could not resolve error, please read contents of UnaryCall.php => wait() => $event->message.');
-            }
-        }catch (\Exception $exception){
-            echo $exception->getMessage() . PHP_EOL;
-            exit(1);
+
+    private function controlResults($response, $status, $method = null)
+    {
+        if ($status->code !== STATUS_OK) {
+            throw new \Exception('Milvus Connection (Status) Error: Code: ' . $status->code . ' Details: ' . $status->details . PHP_EOL);
+        }
+        if (is_null($response)) {
+            throw new \Exception('Milvus Parameters (Response) Error: Could not resolve error, please read contents of UnaryCall.php => wait() => $event->message.');
+        }
+        if (!is_null($method) && is_null($response->$method())) {
+            throw new \Exception('Milvus Parameters (Result) Error: Could not resolve error, please read contents of UnaryCall.php => wait() => $event->message.');
         }
     }
 }
