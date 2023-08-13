@@ -18,6 +18,14 @@ class Field
      * @var int
      */
     private int $fieldType;
+    /**
+     * @var int
+     */
+    private ?int $dim = null;
+    /**
+     * @var int
+     */
+    private ?int $maxLength = null;
 
     /**
      * @var string
@@ -136,6 +144,40 @@ class Field
     public function setIsPrimaryField(bool $isPrimaryField): Field
     {
         $this->isPrimaryField = $isPrimaryField;
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getDim(): ?int
+    {
+        return $this->dim;
+    }
+
+    /**
+     * @param int|null $dim
+     */
+    public function setDim(?int $dim): Field
+    {
+        $this->dim = $dim;
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaxLength(): ?int
+    {
+        return $this->maxLength;
+    }
+
+    /**
+     * @param int|null $maxLength
+     */
+    public function setMaxLength(?int $maxLength): Field
+    {
+        $this->maxLength = $maxLength;
         return $this;
     }
 
